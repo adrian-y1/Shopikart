@@ -1,0 +1,52 @@
+{% extends 'ecom/layout.html' %} 
+{% load humanize %}
+{% block title %} Checkout {% endblock %} 
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <h1 class="mt-3 mb-3 text-center index-header">Checkout</h1>
+            <div class="col-lg-6 m-auto">
+                <div class="checkout-container">
+                    <a href="{% url 'cart' %}" class="btn btn-outline-danger mb-2 mt-2"><i class="bi bi-arrow-left"></i> Back to Cart</a>
+                    <h4>Order Summary:</h4>
+                    <hr>
+                    {% for order in orders %} 
+                        {% if order.quantity > 0 %} 
+                            <div class="checkout-card">
+                                <div class="checkout-item-details">
+                                    <div class="checkout-item-details-left">
+                                        <img src="{{ order.product.image.url }}">
+                                        <div>
+                                            <a href="{% url 'item' order.product.id %}" class="checkout-item-name">{{ order.product.name }}</a>
+                                            <span class="checkout-item-cat">{{ order.product.category }}</span>
+                                            <span class="checkout-item-quantity">Quantity: {{ order.quantity }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="checkout-item-details-right">
+                                        <span>${{ order.price_per_item|floatformat:2|intcomma }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="checkout-order-card">
+                        {% if orders %} 
+                            <div>
+                                <h5>Order Total:</h5>
+                                <span><strong>${{ total_price|floatformat:2|intcomma }}</strong></span>
+                            </div>
+                            <form action="{% url 'checkout' %}" method="POST">
+                                {% csrf_token %} 
+                                <button type="submit" class="checkout-pay"><i class="bi bi-credit-card-fill"></i> Purchase</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

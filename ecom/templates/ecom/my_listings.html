@@ -1,0 +1,42 @@
+{% extends 'ecom/layout.html' %} 
+{% load humanize %}
+{% load static %}
+{% block title %} My Listings {% endblock %} 
+
+{% block body %} 
+
+    <div class="container">
+        <div class="row">
+            <h1 class="mt-3 text-center index-header">My Listings</h1>
+            <div class="card-container">
+                <div class="col-12">
+                    <div class="row justify-content-center">
+                        {% for item in my_items %}
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6">
+                            <a href="{% url 'item' item.id %}" class="view-card-btn">
+                                <div class="card mt-3">
+                                    <img src="{{ item.image.url }}" class="card-img" alt="">
+                                    <h5 class="mt-2 text-center">{{item.name}}</h5>
+                                    <span class="text-center mb-2">
+                                        <input type="hidden" class="average-rating-number" value="{{ item.average_rating }}" data-item_id="{{ item.id }}">
+                                        <div class="stars-outer-index">
+                                            <div class="stars-inner-index" data-item_id="{{ item.id }}"></div>
+                                        </div>
+                                        <span style="color: #b4bfca;">{{ item.average_rating|floatformat:1 }} ({{ item.len_of_reviews }})</span>
+                                    </span>
+                                    <div class="mb-3 card-price text-center">
+                                        <span>${{ item.price|floatformat:2|intcomma }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% empty %} 
+                        <span class="text-center mt-3">You do not currently have any items listed for sale.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'ecom/js/index.js' %}"></script>
+{% endblock %}

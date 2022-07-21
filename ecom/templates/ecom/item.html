@@ -1,0 +1,206 @@
+{% extends 'ecom/layout.html' %} 
+{% load static %}
+{% load humanize %}
+{% block title %} {{ req_item.name }} {% endblock %} 
+
+{% block body %} 
+    <div class="item-view-container" id="item-view-wrapper-row">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row item-view-row">
+                    <div class="col-lg-6 col-md-12 item-view-img-col">
+                        <div class="item-view-img-con">
+                            <img src="{{ req_item.image.url }}" class="item-view-img" alt="">
+                        </div>
+                    </div>
+                    <div class="col item-view-info-col">
+                        <div class="item-view-info">
+                            {% if request.user == req_item.owner %} 
+                            <div class="d-flex justify-content-between flex-row align-items-center mb-3">
+                                <!-- Delete Item -->
+                                <form action="{% url 'item' req_item.id %}"method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-listing-btn" name="delete_item" value="Delete Item"><i class="bi bi-trash-fill"></i> Delete Item</button>
+                                </form>
+
+                                <!-- Edit Item -->
+                                <!-- Button trigger modal -->
+                                <button type="button" class="edit-listing-btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa fa-edit"></i> Edit</button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form data-item_id="{{ req_item.id }}" id="edit-item-form" class="form-group"> 
+                                                <div class="mb-3">
+                                                    <label for="edit-listing-form-title">Title:</label>
+                                                    <input type="text" value="{{ req_item.name }}" id="edit-item-form-title" maxlength="30" class="form-control">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="edit-listing-form-description">Description:</label>
+                                                    <textarea id="edit-item-form-description" class="form-control" rows="4" maxlength="200">{{ req_item.description }}</textarea>
+                                                </div>
+                                                <div class="mb-3 position-relative edit-form-price">
+                                                    <label for="edit-listing-form-quantity">Quantity:</label>
+                                                    <input type="number" value="{{ req_item.quantity }}" min="{{ req_item.quantity }}" max="100" id="edit-item-form-quantity" class="form-control">
+                                                </div>
+                                                <div class="mb-3 position-relative edit-form-price">
+                                                    <label for="edit-listing-form-price">Price:</label>
+                                                    <input type="number" value="{{ req_item.price }}" id="edit-item-form-price" maxlength="10000000" class="form-control" step="0.01">
+                                                    <span>$</span>
+                                                </div>
+                                                
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- Item Information -->
+                            <div class="item-view-name">
+                                <h3 id="update-item-title">{{ req_item.name }}</h3>
+                                <div class="item-view-wishlist-con">
+                                    {% if req_item in wishlist_items %} 
+                                        <button type="submit" class="update-wishlist update-wishlist-remove" data-action="remove" data-item_id="{{ req_item.id }}" value="remove">Remove from Wishlist <i class="bi bi-dash fa-lg"></i> </button>
+                                    {% else %} 
+                                        <button type="submit" class="update-wishlist update-wishlist-add" data-action="add" data-item_id="{{ req_item.id }}" value="add"> Add to Wishlist <i class="bi bi-plus fa-lg"></i></button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="item-view-reviews">
+                                <input type="hidden" class="average-rating-number-item-view" value="{{ req_item.average_rating }}" data-item_id="{{ req_item.id }}">
+                                <div class="stars-outer-item-view">
+                                    <div class="stars-inner-item-view" data-item_id="{{ req_item.id }}"></div>
+                                </div>
+                                <a href="#customer-reviews-row">{{ req_item.average_rating|floatformat:1 }} ({{ req_item.len_of_reviews }} ratings)</a>
+                            </div>
+                            <div class="item-view-description-con">
+                                <span><strong>Description</strong></span> <br>
+                                <span id="update-item-description">{{ req_item.description }}</span>
+                            </div>
+                            <div class="item-view-product-details">
+                                <span><strong>Product Details</strong></span>
+                                <span>Seller: {{ req_item.owner }}</span>
+                                <span>Date Listed: {{ item_listing_date }}</span>
+                                <span>Category: {{ req_item.category }}</span>
+                            </div>
+                            <div class="item-view-price-container">
+                                {% if req_item.quantity <= 0 %} 
+                                    <h5 style="color: red;" class='item-view-stock'>Out of Stock!</h5>
+                                {% endif %}
+                                <h4 id="update-item-price">${{ req_item.price|floatformat:2|intcomma }}</h4>
+                                <div class="item-view-buttons">
+                                    {% if request.user != req_item.owner %}
+                                        {% if req_item.quantity > 0 %} 
+                                            <form id="add-to-cart-item-view-form" data-action="add" data-item_id="{{ req_item.id }}">
+                                                <div>
+                                                    <label for="quantity-number-input">Available Quantity: <span id="update-item-quantity">{{ req_item.quantity }}</span></label>
+                                                    <input type="number" value="1" min="1" max="{{ req_item.quantity }}" id="quantity-number-input">
+                                                </div>
+                                                <button type="submit">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart-plus-fill" viewBox="0 0 16 16">
+                                                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z"/>
+                                                </svg>Add to Cart</button>
+                                            </form> 
+                                        {% endif %}
+                                    {% else %}
+                                    Available Quantity: <span id="update-item-quantity">{{ req_item.quantity }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-5">
+                <div class="row customer-reviews-row" id="customer-reviews-row">
+                    {% if request.user != req_item.owner %}
+                    <div class="col-lg-4 col-md-12 customer-reviews-form mb-5">
+                        <div class="customer-reviews-form-area">
+                            {% if history_obj %}
+                                <h4>Submit a Review</h4>
+                                <form action="{% url 'item' req_item.id %}" method="POST" name="review-form">
+                                    {% csrf_token %}
+                                        <div class="rate-container" id="rate-container">
+                                            <input type="radio" name="rating" id="rating-10" value="5" required><label for="rating-10" title="5"></label>
+                                            <input type="radio" name="rating" id="rating-9" value="4.5" required><label for="rating-9" title="4.5" class="half"></label>
+                                            <input type="radio" name="rating" id="rating-8" value="4" required><label for="rating-8" title="4"></label>
+                                            <input type="radio" name="rating" id="rating-7" value="3.5" required><label for="rating-7" title="3.5" class="half"></label>
+                                            <input type="radio" name="rating" id="rating-6" value="3" required><label for="rating-6" title="3"></label>
+                                            <input type="radio" name="rating" id="rating-5" value="2.5" required><label for="rating-5" title="2.5" class="half"></label>
+                                            <input type="radio" name="rating" id="rating-4" value="2" required><label for="rating-4" title="2"></label>
+                                            <input type="radio" name="rating" id="rating-3" value="1.5" required><label for="rating-3" title="1.5" class="half"></label>
+                                            <input type="radio" name="rating" id="rating-2" value="1" required><label for="rating-2" title="1"></label>
+                                            <input type="radio" name="rating" id="rating-1" value="0.5" required><label for="rating-1" title="0.5" class="half"></label>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="review-title"> Review Title:</label>
+                                            <input type="text" class="form-control" id="review-title" name="title" placeholder="Enter review title here..." maxlength="30">
+                                        </div>
+
+                                        <label for="review-comment">Review Comment:</label>
+                                        <textarea name="comment" class="form-control" id="review-comment" rows="4" placeholder="Enter review comment here" maxlength="200"></textarea>
+                                        <button type="submit" value="Submit Review" class="submit-review-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                        </svg> Submit Review</button>
+                                </form>
+                            {% else %}
+                                <h4>Submit a Review</h4>
+                                Must purchase the item to be able to review it.
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-lg-6 col-md-12">
+                        <div class="customer-reviews-container">
+                            <div class="customer-reviews-header mb-3">
+                                <h4>Customer Reviews</h4>
+                            </div>
+                            {% for review in item_reviews %}
+                            <div class="customer-reviews-card">
+                                <div class="customer-reviews-user">
+                                    <div>
+                                        <span><i class="bi bi-person-circle"></i>{{ review.user.first_name }}.<span>{{ review.user.last_name.0 }}</span></span>
+                                        <div class="customer-reviews-date">
+                                            <span>
+                                                {{ review.date_posted }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="customer-reviews-title">
+                                    <span>
+                                        <input type="hidden" value="{{ review.rating }}" data-review_id="{{ review.id }}" class="number-of-rating">
+                                        <div class="stars-outer">
+                                            <div class="stars-inner" data-review_id="{{ review.id }}"></div>
+                                        </div> 
+                                    </span>
+                                    <span><strong>{{ review.title }}</strong></span>
+                                </div>
+                                <div class="customer-reviews-comment">
+                                    <span>{{ review.comment }}</span>
+                                </div>
+                            </div>  
+                            {% empty %} 
+                            <span class="empty-review">Be the first person to review this item.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'ecom/js/item.js' %}"></script>
+{% endblock %}

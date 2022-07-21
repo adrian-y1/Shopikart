@@ -1,0 +1,24 @@
+{% extends 'ecom/layout.html' %} 
+
+{% block title %} Sell Item {% endblock %} 
+
+{% block body %} 
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 px-0">
+                <h1 class="mt-3 mb-3 text-center index-header">List an Item for Sale</h1>
+                <form class="sell-form" action="{% url 'sell' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ sell_form }}
+                    <div class="selling-price">
+                        <label for="price">Price:</label>
+                        <input id="price" type="number" name="price" class="form-control" min="0" max="10000000" required placeholder="Price" step="0.01">
+                        <span>$</span>
+                    </div>
+                    <input type="submit" value="Create Listing" class="create-listing-btn">
+                </form>
+            </div>
+        </div>
+    </div>
+ 
+{% endblock %}
