@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SHOPIKART_DJANGO_S_K')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('DEBUG_VALUE')=='TRUE') 
 
 ALLOWED_HOSTS = ['.herokuapp.com']
 
