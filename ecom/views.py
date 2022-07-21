@@ -152,7 +152,7 @@ def view_item(request, item_id):
                                     rating = review_form.cleaned_data['rating']
                                     user_review = Review(product=product_obj, user=request.user, title=title, comment=comment, rating=rating)
                                     user_review.save()
-                                    messages.success(request, f'You have successfully placed a review on {title}.')
+                                    messages.success(request, f'You have successfully placed a review on {requested_item.name}.')
                                     return redirect(f'/item/{item_id}')
                                 except Item.DoesNotExist:
                                     pass
