@@ -19,7 +19,6 @@ urlpatterns = [
     path("update_cart", views.update_cart, name="update_cart"),
     path("update_wishlist", views.update_wishlist, name="update_wishlist"),
     path('edit_item/<int:item_id>', views.edit_item, name='edit_item'),
-    path('history_search', views.history_search_api, name='history_search'),
     path('get_user_tz', views.get_user_tz, name='get_user_tz'),
 
     # Authentication

@@ -364,14 +364,6 @@ def wishlist_view(request):
 
     return render(request, 'ecom/wishlist.html', context)
 
-@login_required(login_url='/login')
-def history_search_api(request):
-    try:
-        history_obj = History.objects.filter(user=request.user)
-    except History.DoesNotExist:
-        pass
-    
-    return JsonResponse([obj.serialize() for obj in history_obj], safe=False)
 
 @login_required(login_url='/login')
 def update_wishlist(request):

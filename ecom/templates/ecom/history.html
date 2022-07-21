@@ -9,10 +9,6 @@
             <h1 class="text-center mb-3 mt-3 index-header">My Purchases</h1>
             <div class="col-lg-6 m-auto">
                 <div class="history-container">
-                    <div class="input-group">
-                        <div class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></div>
-                        <input type="search" class="history-search" placeholder="Search your purchases..." aria-describedby="basic-addon1">
-                    </div>
                     {% for history in my_history %}
                         <div class="checkout-card">
                             <div class="checkout-item-details">
@@ -38,28 +34,6 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const historySearch = document.querySelector('.history-search')
-            const historyCard = document.querySelectorAll('.checkout-card')
-            history_data = []
-            historySearch.addEventListener('input', e => {
-                const val = e.target.value.toLowerCase();
-                for(i=0; i < history_data.length; i++){
-                    if(history_data[i].includes(val)){
-                        historyCard[i].style.display = 'block'
-                    }else {
-                        historyCard[i].style.display = 'none'
-                    }
-                }
-            })
-            
-            fetch('/history_search')
-            .then(res => res.json())
-            .then(data => {
-                data.forEach(d => {
-                    history_data.push(d.product.name.toLowerCase())
-                })
-            })
-        })
+        
     </script>
 {% endblock %}
