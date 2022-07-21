@@ -1,9 +1,6 @@
-from tkinter import CASCADE
-from unicodedata import category
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from sqlalchemy import all_, null
-import statistics
 
 CATEGORIES = (
     ('', 'Select a Category'),
