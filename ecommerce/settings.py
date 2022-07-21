@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SHOPIKART_DJANGO_S_K')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://shopikartio.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['shopikartio.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
