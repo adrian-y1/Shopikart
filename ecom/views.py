@@ -15,7 +15,7 @@ from django.http import JsonResponse
 import json
 from django.contrib import messages
 import datetime
-import zoneinfo
+# import zoneinfo
 import pytz
 
 class SellItemForm(forms.Form):
@@ -100,7 +100,7 @@ def view_item(request, item_id):
     quantity = 'p' * requested_item.quantity
     item_reviews = Review.objects.filter(product=item_id).order_by('-date_posted')
     history_obj = History.objects.filter(product=item_id, user=request.user)
-    tz = zoneinfo.ZoneInfo(request.session['timezone'])
+    tz = pytz.timezone(request.session['timezone'])
     item_listing_date = requested_item.date_listed.astimezone(tz).strftime("%b %d %Y, %I:%M %p")
 
     for item in item_reviews:
@@ -342,7 +342,7 @@ def checkout(request):
 def history(request):
     try:
         history_obj = History.objects.filter(user=request.user).order_by('-date_added')
-        tz = zoneinfo.ZoneInfo(request.session['timezone'])
+        tz = pytz.timezone(request.session['timezone'])
         for obj in history_obj:
             obj.date_added = obj.date_added.astimezone(tz).strftime("%b %d %Y, %I:%M %p")
     except History.DoesNotExist:
