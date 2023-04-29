@@ -4,7 +4,7 @@ Visit website: [shopikart.up.railway.app](https://shopikart.up.railway.app/)
 
 ## Overview
 
-Shopikart is an e-commerce app built with Django that offers a comprehensive platform for users to buy and sell products. The app provides a user-friendly interface with features like product reviews and ratings, the ability to list products for sale, and a cart functionality that allows users to add and manage their selected items. Shopikart also features a wishlist function for users to save their desired products for future reference.
+Shopikart is a playful e-commerce app built with Django that offers a comprehensive platform for users to buy and sell products. The app provides a user-friendly interface with features like product reviews and ratings, the ability to list products for sale, and a cart functionality that allows users to add and manage their selected items. Shopikart also features a wishlist function for users to save their desired products for future reference.
 
 This application was initially developed as a project for the "[CS50's Web Programming with Python and JavaScript course](https://cs50.harvard.edu/web/2020/)" course offered by Harvard University. Since then, it has undergone several enhancements and modifications to incorporate a wider range of features.
 
